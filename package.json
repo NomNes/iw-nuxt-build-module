@@ -1,0 +1,32 @@
+{
+  "name": "iw-build-nuxt-module",
+  "version": "0.1.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NomNes/iw-nuxt-build-module.git"
+  },
+  "author": "Nikita Umnov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NomNes/iw-nuxt-build-module/issues"
+  },
+  "homepage": "https://github.com/NomNes/iw-nuxt-build-module#readme",
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "lodash.defaults": "^4.2.0"
+  },
+  "files": [
+    "index.js",
+    "build.js",
+    "config.js",
+    "module.js"
+  ],
+  "bin": {
+    "iw-build": "./index.js"
+  }
+}
