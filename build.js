@@ -2,6 +2,7 @@ const {exec} = require("child_process");
 const getConfig = require("./config");
 const fsExtra = require("fs-extra");
 const fs = require("fs");
+const path = require("path");
 
 const pathList = [
   ".nuxt",
@@ -26,7 +27,8 @@ const pathList = [
 function rebuild () {
   return new Promise((resolve, reject) => {
     const config = getConfig();
-    const cwd = process.cwd();
+    let cwd = process.cwd();
+    if (new RegExp(`${config.buildDirectory}$`).test(cwd)) cwd = path.resolve(cwd, "..");
     console.log("update...");
     const vcs = config.vcs === "git" ? "git fetch --all; git reset --hard origin/master" : "hg pull; hg up --clean";
     return exec(vcs, {cwd}, () => {
@@ -53,10 +55,15 @@ function rebuild () {
             if (!fs.existsSync(current)) fs.mkdirSync(current);
             return fsExtra.remove(current).then(() => {
               return fsExtra.move(new_build, current).then(() => {
-                return exec(`pm2 reload ${ecosystem.apps[0].name}`, {cwd}, () => {
-                  console.log("replaced!");
-                  return resolve();
-                })
+                const ecosystemPath = path.resolve(cwd, "ecosystem.config.js");
+                if (fs.existsSync(ecosystemPath)) {
+                  const ecosystem = require(ecosystemPath);
+                  return exec(`pm2 reload ${ecosystem.apps[0].name}`, {cwd}, () => {
+                    console.log("replaced!");
+                    return resolve();
+                  })
+                }
+                return reject("ecosystem.config.js not found")
               }).catch(reject)
             }).catch(reject)
           }).catch(reject)
